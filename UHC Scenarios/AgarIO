@@ -3,7 +3,7 @@ options:
 
 command /agario [<text>]:
 	permission: skript.op
-	permission message: "{@P} &cYou don't have enough permission to run this command"
+	permission message: {@P} &cYou don't have enough permission to run this command
 	trigger:
 		if arg-1 is set:
 			if arg-1 is "enable":
