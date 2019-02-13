@@ -1,0 +1,59 @@
+options:
+	P: &cBlood Enchants &8»&7
+
+import:
+	org.bukkit.event.enchantment.EnchantItemEvent
+
+command /bloodenchant [<text>]:
+	permission: skript.op
+	permission message: {@P} &cYou don't have enough permission to run this command
+	trigger:
+		if arg-1 is set:
+			if arg-1 is "enable":
+				if {Scen::BloodEnchants} is set:
+					send "{@P} &cBlood Enchants is already enabled"
+				else if {Scen::BloodEnchants} is not set:
+					send "{@P} &aBlood Enchants &7has been enabled"
+					set {Scen::BloodEnchants} to true
+			if arg-1 is "disable":
+				if {Scen::BloodEnchants} is not set:
+					send "{@P} &cBlood Enchants is not enabled"
+				else if {Scen::BloodEnchants} is set:
+					send "{@P} &aBlood Enchants &7has been disabled"
+					delete {Scen::BloodEnchants}
+			if arg-1 is "toggle":
+				if {Scen::BloodEnchants} is not set:
+					send "{@P} &aBlood Enchants &7has been enabled"
+					set {Scen::BloodEnchants} to true
+				else if {Scen::BloodEnchants} is set:
+					send "{@P} &aBlood Enchants &7has been disabled"
+					delete {Scen::BloodEnchants}
+			if arg-1 is "info":
+				if {Scen::BloodEnchants} is not set:
+					set {_temp} to "&cDisabled"
+				else if {Scen::BloodEnchants} is set:
+					set {_temp} to "&aEnabled"
+				send "{@P} Scenario Information:"
+				send " &8● &cStatut &8- &f%{_temp}%"
+				send " &8● &4Skript Creator &8- &fHaon"
+				send " &8● &cSkript Version &8- &f1.0"
+				send " &8● &4Dependency &8- &fSkript & Sk-Mirror"
+				send " &8● &cScenario Creator &8- &f/u/Yerru"
+				send " &8● &4Scenario Description &8- &fEvery time you enchant an item, you will lose half a heart"
+		else if arg-1 is not set:
+			send "{@P} Scenario Help:"
+			send " &8● &c/bloodenchant enable &8- &fEnable the scenario"
+			send " &8● &4/bloodenchant disable &8- &fDisable the scenario"
+			send " &8● &c/bloodenchant toggle &8- &fToggle the scenario"
+			send " &8● &4/bloodenchant info &8- &fGive informations about the scenario"
+
+on tab completer for "/bloodenchant":
+	add "enable" to completions
+	add "disable" to completions
+	add "toggle" to completions
+	add "info" to completions
+
+on EnchantItemEvent:
+	if {Scen::BloodEnchants} is set:
+		set {_player} to event.getEnchanter()
+		set health of {_player} to ({_player}'s health - 0.5)
