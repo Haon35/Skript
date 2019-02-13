@@ -1,0 +1,68 @@
+options:
+	P: &aAgar.IO &8»&7
+
+command /agario [<text>]:
+	permission: skript.op
+	permission message: "{@P} &cYou don't have enough permission to run this command"
+	trigger:
+		if arg-1 is set:
+			if arg-1 is "enable":
+				if {Scen::AgarIO} is set:
+					send "{@P} &cAgar.IO is already enabled"
+				else if {Scen::AgarIO} is not set:
+					send "{@P} &aAgar.IO &7has been enabled"
+					set {Scen::AgarIO} to true
+			if arg-1 is "disable":
+				if {Scen::AgarIO} is not set:
+					send "{@P} &cAgar.IO is not enabled"
+				else if {Scen::AgarIO} is set:
+					send "{@P} &aAgar.IO &7has been disabled"
+					delete {Scen::AgarIO}
+					loop all players:
+						loop-player.setWalkSpeed(0.2)
+			if arg-1 is "toggle":
+				if {Scen::AgarIO} is not set:
+					send "{@P} &aAgar.IO &7has been enabled"
+					set {Scen::AgarIO} to true
+				else if {Scen::AgarIO} is set:
+					send "{@P} &aAgar.IO &7has been disabled"
+					delete {Scen::AgarIO}
+					loop all players:
+						loop-player.setWalkSpeed(0.2)
+			if arg-1 is "info":
+				if {Scen::AgarIO} is not set:
+					set {_temp} to "&cDisabled"
+				else if {Scen::AgarIO} is set:
+					set {_temp} to "&aEnabled"
+				send "{@P} Scenario Information:"
+				send " &8● &aStatut &8- &f%{_temp}%"
+				send " &8● &2Skript Creator &8- &fHaon"
+				send " &8● &aSkript Version &8- &f1.0"
+				send " &8● &2Dependency &8- &fSkript & SkEllett"
+				send " &8● &aScenario Creator &8- &f/u/ImEricMC & /u/xViciousTopies"
+				send " &8● &2Scenario Description &8- &fThe lower on health you are, the faster you run"
+		else if arg-1 is not set:
+			send "{@P} Scenario Help:"
+			send " &8● &a/agario enable &8- &fEnable the scenario"
+			send " &8● &2/agario disable &8- &fDisable the scenario"
+			send " &8● &a/agario toggle &8- &fToggle the scenario"
+			send " &8● &2/agario info &8- &fGive informations about the scenario"
+
+on tab completer for "/agario":
+	add "enable" to completions
+	add "disable" to completions
+	add "toggle" to completions
+	add "info" to completions
+
+on join:
+	player.setWalkSpeed(0.2)
+
+on packet send:
+	if event-string is "PacketPlayOutUpdateHealth":
+		if {Scen::AgarIO} is set:
+			set {_health} to event-player.getHealth() / event-player.getMaxHealth()
+			set {_speedMultiplier} to 2 - {_health}
+			set {_newSpeed} to {_speedMultiplier} * 0.2
+			event-player.setWalkSpeed({_newSpeed})
+		else if {Scen::AgarIO} is not set:
+			event-player.setWalkSpeed(0.2)
