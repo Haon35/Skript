@@ -1,0 +1,85 @@
+options:
+	P: &eThe Hobbit &8»&7
+
+command /thehobbit [<text>] [<text>]:
+	permission: skript.op
+	permission message: {@P} &cYou don't have enough permission to run this command
+	trigger:
+		if arg-1 is set:
+			if arg-1 is "enable":
+				if {Scen::TheHobbit} is set:
+					send "{@P} &cThe Hobbit is already enabled"
+				else if {Scen::TheHobbit} is not set:
+					send "{@P} &aThe Hobbit &7has been enabled"
+					set {Scen::TheHobbit} to true
+					give gold nugget named "§bRing" with lore "&7&oRight-Click to become invisible for 30 seconds!" to all players
+			if arg-1 is "disable":
+				if {Scen::TheHobbit} is not set:
+					send "{@P} &cThe Hobbit is not enabled"
+				else if {Scen::TheHobbit} is set:
+					send "{@P} &aThe Hobbit &7has been disabled"
+					delete {Scen::TheHobbit}
+			if arg-1 is "toggle":
+				if {Scen::TheHobbit} is not set:
+					send "{@P} &aThe Hobbit &7has been enabled"
+					set {Scen::TheHobbit} to true
+					give gold nugget named "§bRing" with lore "&7&oRight-Click to become invisible for 30 seconds!" to all players
+				else if {Scen::TheHobbit} is set:
+					send "{@P} &aThe Hobbit &7has been disabled"
+					delete {Scen::TheHobbit}
+			if arg-1 is "give":
+				if arg-2 is set:
+					if arg-2 is "*":
+						give gold nugget named "§bRing" with lore "&7&oRight-Click to become invisible for 30 seconds!" to all players
+						broadcast "{@P} A Ring has been given out to every players"
+					else:
+						set {_player} to arg-2 parsed as a player
+						if {_player} is online:
+							give gold nugget named "§bRing" with lore "&7&oRight-Click to become invisible for 30 seconds!" to {_player}
+							send "{@P} You have been given a Ring" to {_player}
+							send "{@P} You gave a Ring to &a%{_player}%" to sender
+						else:
+							send "{@P} &c%{_player}% is not online"
+				else:
+					give gold nugget named "§bRing" with lore "&7&oRight-Click to become invisible for 30 seconds!" to player
+					send "{@P} You gave yourself a Ring"
+			if arg-1 is "info":
+				if {Scen::TheHobbit} is not set:
+					set {_temp} to "&cDisabled"
+				else if {Scen::TheHobbit} is set:
+					set {_temp} to "&aEnabled"
+				send "{@P} Scenario Information:"
+				send " &8● &eStatut &8- &f%{_temp}%"
+				send " &8● &6Skript Creator &8- &fHaon"
+				send " &8● &eSkript Version &8- &f1.0"
+				send " &8● &6Dependency &8- &fSkript"
+				send " &8● &eScenario Creator &8- &f/u/6dayna6"
+				send " &8● &6Scenario Description &8- &fRight-clicking the 'ring' gives you invisibility for 30 seconds"
+		else if arg-1 is not set:
+			send "{@P} Scenario Help:"
+			send " &8● &e/thehobbit enable &8- &fEnable the scenario"
+			send " &8● &6/thehobbit disable &8- &fDisable the scenario"
+			send " &8● &e/thehobbit toggle &8- &fToggle the scenario"
+			send " &8● &6/thehobbit give [player/*] &8- &fGive a Ring to a player/every players"
+			send " &8● &e/thehobbit info &8- &fGive informations about the scenario"
+
+on tab completer for "/thehobbit":
+	if argument at 2 is not set:
+		add "enable" to completions
+		add "disable" to completions
+		add "toggle" to completions
+		add "give" to completions
+		add "info" to completions
+	else:
+		if argument at 1 is "give":
+			add "*" to completions
+			loop all players:
+				add "%loop-value%" to completions
+
+on right click with a gold nugget:
+	if {Scen::TheHobbit} is set:
+		if name of player's tool is "§bRing":
+			remove invisibility from player
+			apply invisibility to event-player for 30 seconds
+			remove 1 gold nugget from player's inventory
+			send "{@P} &7You right-clicked the Ring, you're now invisible for 30 seconds"
