@@ -1,0 +1,79 @@
+options:
+	P: &aQuadrant Paranoia &8»&7
+
+command /quadrantparanoia [<text>]:
+	permission: skript.op
+	permission message: {@P} &cYou don't have enough permission to run this command
+	trigger:
+		if arg-1 is set:
+			if arg-1 is "enable":
+				if {Scen::QuadrantParanoia} is set:
+					send "{@P} &cQuadrant Paranoia is already enabled"
+				else if {Scen::QuadrantParanoia} is not set:
+					send "{@P} &aQuadrant Paranoia &7has been enabled"
+					set {Scen::QuadrantParanoia} to true
+			if arg-1 is "disable":
+				if {Scen::QuadrantParanoia} is not set:
+					send "{@P} &cQuadrant Paranoia is not enabled"
+				else if {Scen::QuadrantParanoia} is set:
+					send "{@P} &aQuadrant Paranoia &7has been disabled"
+					delete {Scen::QuadrantParanoia}
+					loop all players:
+						set loop-player tab name to "&f%loop-player%"
+			if arg-1 is "toggle":
+				if {Scen::QuadrantParanoia} is not set:
+					send "{@P} &aQuadrant Paranoia &7has been enabled"
+					set {Scen::QuadrantParanoia} to true
+				else if {Scen::QuadrantParanoia} is set:
+					send "{@P} &aQuadrant Paranoia &7has been disabled"
+					delete {Scen::QuadrantParanoia}
+					loop all players:
+						set loop-player tab name to "&f%loop-player%"
+			if arg-1 is "color":
+				send "{@P} Quadrant Paranoia Colors:"
+				send " &8● &2X+&8, &2Z+ &8» &cRed"
+				send " &8● &2X+&8, &2Z- &8» &bBlue"
+				send " &8● &2X-&8, &2Z+ &8» &aGreen"
+				send " &8● &2X-&8, &2Z- &8» &eYellow"
+			if arg-1 is "info":
+				if {Scen::QuadrantParanoia} is not set:
+					set {_temp} to "&cDisabled"
+				else if {Scen::QuadrantParanoia} is set:
+					set {_temp} to "&aEnabled"
+				send "{@P} Scenario Information:"
+				send " &8● &aStatut &8- &f%{_temp}%"
+				send " &8● &2Skript Creator &8- &fHaon"
+				send " &8● &aSkript Version &8- &f1.0"
+				send " &8● &2Dependency &8- &fSkript"
+				send " &8● &aScenario Creator &8- &f/u/JoshC2"
+				send " &8● &2Scenario Description &8- &fDepending on your coordinates, you get a different tab color"
+		else if arg-1 is not set:
+			send "{@P} Scenario Help:"
+			send " &8● &a/quadrantparanoia enable &8- &fEnable the scenario"
+			send " &8● &2/quadrantparanoia disable &8- &fDisable the scenario"
+			send " &8● &a/quadrantparanoia toggle &8- &fToggle the scenario"
+			send " &8● &2/quadrantparanoia info &8- &fGive informations about the scenario"
+			send " &8● &a/quadrantparanoia color &8- &fGive informations about the scenario"
+
+on tab completer for "/quadrantparanoia":
+	add "enable" to completions
+	add "disable" to completions
+	add "toggle" to completions
+	add "info" to completions
+	add "color" to completions
+
+on join:
+	set player tab name to "&f%player%"
+
+on any move:
+	loop all players:
+		if x-coordinate of loop-player is greater than 0:
+			if z-coordinate of loop-player is greater than 0:
+				set loop-player tab name to "&c%loop-player%"
+			else:
+				set loop-player tab name to "&b%loop-player%"
+		else:
+			if z-coordinate of loop-player is greater than 0:
+				set loop-player tab name to "&a%loop-player%"
+			else:
+				set loop-player tab name to "&e%loop-player%"
